@@ -1,0 +1,12 @@
+{
+  "trunk": {
+    "name": "my-agent inbound",
+    "numbers": ["+91XXXXXXXXXX"],
+    "allowed_numbers": [],
+    "krisp_enabled": false,
+    "media_encryption": "SIP_MEDIA_ENCRYPT_ALLOW",
+    "headers_to_attributes": { "X-Provider-CallSid": "provider.call_sid" },
+    "ringing_timeout": "30s",
+    "max_call_duration": "1800s"
+  }
+}

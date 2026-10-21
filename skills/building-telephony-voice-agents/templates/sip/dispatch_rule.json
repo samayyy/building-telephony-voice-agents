@@ -1,0 +1,16 @@
+{
+  "dispatch_rule": {
+    "name": "my-agent inbound calls",
+    "trunk_ids": ["ST_xxxxxxxxxxxx"],
+    "hide_phone_number": false,
+    "rule": {
+      "dispatch_rule_individual": { "room_prefix": "call-" }
+    },
+    "room_config": {
+      "agents": [
+        { "agent_name": "my-agent", "metadata": "{\"flow\":\"inbound\"}" }
+      ]
+    },
+    "attributes": { "line": "support" }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "telephony-voice-agents",
+  "description": "Agent skill for building phone-call voice agents on Gemini Live with LiveKit, SIP trunking and WebSocket media streams",
+  "owner": { "name": "samayyy" },
+  "plugins": [
+    {
+      "name": "building-telephony-voice-agents",
+      "source": "./",
+      "description": "Build, connect and tune phone-call voice agents on Gemini Live (LiveKit Cloud or self-hosted, SIP or WebSocket streams)",
+      "version": "1.0.0",
+      "license": "MIT",
+      "keywords": ["voice-agent", "telephony", "gemini-live", "livekit", "sip", "twilio", "exotel", "plivo", "websocket"],
+      "category": "development"
+    }
+  ]
+}

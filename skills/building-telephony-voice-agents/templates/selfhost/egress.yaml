@@ -1,0 +1,24 @@
+# livekit/egress config (optional; for call recordings to your bucket).
+# Keys checked against the livekit/egress README (2026-10-21). The StartEgress API needs livekit-server >= v1.13.5.
+api_key: APIxxxxxxxxxxxx
+api_secret: change-me-to-a-long-random-secret
+ws_url: ws://127.0.0.1:7880
+redis:
+  address: 127.0.0.1:6379                # same Redis as livekit-server ("no response from egress service" otherwise)
+
+health_port: 8082                        # 8080 = SIP health, 8081 = agent worker health on this host
+prometheus_port: 9091
+
+storage:                                 # one provider; can be overridden per request
+  gcp:
+    credentials_json: ""                 # empty -> GOOGLE_APPLICATION_CREDENTIALS (mounted key)
+    bucket: my-call-recordings
+  # s3:
+  #   access_key: ...
+  #   secret: ...
+  #   region: ap-south-1
+  #   bucket: my-call-recordings
+  #   endpoint: ""                       # set for S3-compatible stores (and force_path_style per request)
+
+# Chrome-based egress (room composite with layout, web) runs with the Chrome sandbox disabled by default.
+# enable_chrome_sandbox: true            # needs the seccomp profile from the egress repo

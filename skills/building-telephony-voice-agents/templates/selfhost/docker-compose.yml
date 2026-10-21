@@ -1,0 +1,84 @@
+# Single-VM self-hosted LiveKit for phone agents: Redis + livekit-server + livekit/sip + Caddy (TLS),
+# with optional egress and agent worker profiles.
+#   docker compose up -d                          # core: redis, livekit, sip, caddy
+#   docker compose --profile egress up -d         # + recording
+#   docker compose --profile agent up -d --build  # + agent worker built from ../livekit
+# Image tags checked on Docker Hub 2026-10-21. Not run end to end for this skill; see README.md checklist.
+#
+# Host networking everywhere that carries media: the SIP RTP range (10000-20000/udp) and the SFU range
+# (50000-60000/udp) are too large for Docker port publishing, and an extra NAT layer breaks SDP addresses.
+# Because of host networking, the cloud firewall is the only thing protecting 6379/7880/8080/9090: keep them closed.
+
+services:
+  redis:
+    image: redis:7
+    network_mode: host
+    command: ["redis-server", "--bind", "127.0.0.1", "--port", "6379", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  livekit:
+    image: livekit/livekit-server:v1.13.10
+    network_mode: host
+    command: ["--config", "/etc/livekit.yaml"]
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml:ro
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  sip:
+    image: livekit/sip:v1.20.0
+    network_mode: host
+    environment:
+      SIP_CONFIG_FILE: /etc/sip.yaml
+    volumes:
+      - ./sip.yaml:/etc/sip.yaml:ro
+    depends_on:
+      - redis
+      - livekit
+    restart: unless-stopped
+
+  # TLS for wss://livekit.example.com -> 127.0.0.1:7880 (automatic Let's Encrypt; needs 80 and 443 open).
+  # Replace with your load balancer if you have one. livekit/generate produces an equivalent Caddy setup.
+  caddy:
+    image: caddy:2
+    network_mode: host
+    command: ["caddy", "reverse-proxy", "--from", "livekit.example.com", "--to", "127.0.0.1:7880"]
+    volumes:
+      - caddy_data:/data
+    restart: unless-stopped
+
+  egress:
+    profiles: ["egress"]
+    image: livekit/egress:v1.15.0
+    network_mode: host
+    environment:
+      EGRESS_CONFIG_FILE: /etc/egress.yaml
+      # GOOGLE_APPLICATION_CREDENTIALS: /etc/gcp-sa.json
+    volumes:
+      - ./egress.yaml:/etc/egress.yaml:ro
+      # - ./gcp-sa.json:/etc/gcp-sa.json:ro
+    # cap_add: [SYS_ADMIN]   # only if Chrome-based (room composite/web) egress fails to start; see README
+    depends_on:
+      - redis
+      - livekit
+    restart: unless-stopped
+
+  agent:
+    profiles: ["agent"]
+    build: ../livekit                 # templates/livekit (Dockerfile + agent_gemini_live.py)
+    network_mode: host
+    env_file:
+      - ../livekit/.env.local         # copy from ../livekit/env.example
+    environment:
+      LIVEKIT_URL: wss://livekit.example.com
+      NOISE_CANCELLATION: "none"      # BVCTelephony authenticates against LiveKit Cloud; not usable here
+      RECORD_SESSION: "0"             # Cloud observability recorder; use egress when self-hosting
+    stop_grace_period: 10m            # let live calls finish on redeploy
+    restart: unless-stopped
+
+volumes:
+  redis_data: {}
+  caddy_data: {}

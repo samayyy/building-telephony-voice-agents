@@ -1,0 +1,33 @@
+# livekit/sip config. Keys checked against livekit/sip pkg/config/config.go (main, 2026-10-21).
+api_key: APIxxxxxxxxxxxx                 # same key pair as livekit.yaml (or env LIVEKIT_API_KEY)
+api_secret: change-me-to-a-long-random-secret
+ws_url: ws://127.0.0.1:7880              # livekit-server as reachable from this host (or env LIVEKIT_WS_URL)
+redis:
+  address: 127.0.0.1:6379                # MUST be the same Redis as livekit-server
+
+sip_port: 5060                           # UDP + TCP signalling (default 5060). Open BOTH protocols.
+rtp_port: 10000-20000                    # RTP media (default). Open to the carrier's MEDIA IP ranges.
+
+# Public address advertised in SDP/Contact. Choose ONE (they cannot be combined; the service refuses to start):
+use_external_ip: true                    # STUN discovery
+# nat_1_to_1_ip: 203.0.113.10            # explicit static IP (preferred when known)
+# media_nat_1_to_1_ip: 203.0.113.11      # separate public IP for media only (excludes media_use_external_ip)
+# local_net: 10.0.0.0/16
+
+health_port: 8080
+prometheus_port: 9090
+logging:
+  level: info                            # debug while bringing up a trunk
+
+# SIP over TLS (carrier origination ";transport=tls", default port 5061):
+# tls:
+#   port: 5061
+#   certs:
+#     - cert_file: /etc/sip/tls.crt
+#       key_file: /etc/sip/tls.key
+# sip_hostname: sip.example.com
+
+# Capacity / routing across several SIP instances:
+# max_cpu_utilization: 0.9               # default 0.9
+# max_active_calls: 200
+# sip_trunk_ids: [ST_xxxxxxxxxxxx]        # pin this instance to specific trunks

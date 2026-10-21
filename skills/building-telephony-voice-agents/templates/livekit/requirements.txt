@@ -1,0 +1,20 @@
+# Pin EXACTLY. A rebuild that silently pulls a new minor version has broken this stack before
+# (livekit-plugins-google 1.8.2-1.8.4 reject vertexai=True + "gemini-3.8-live" with ValueError).
+# Keep a unit test that asserts these pins if your image installs from pyproject.toml.
+
+# --- Production-verified set (Python 3.12) ---------------------------------------------------------
+livekit-agents[google,silero]==1.7.1
+livekit-plugins-google==1.7.1
+livekit-plugins-silero==1.7.1
+livekit-plugins-noise-cancellation~=0.3.0   # BVCTelephony; works only on LiveKit Cloud rooms
+google-genai==2.21.0                        # Live SDK the probes were verified against
+
+# --- Current 1.8.x alternative (installed and introspected 2026-10-21, not run on live calls) ---------
+# livekit-agents[google,silero]==1.8.8
+# livekit-plugins-google==1.8.8             # >=1.8.5 accepts the short Vertex model name again
+# livekit-plugins-silero==1.8.8
+# livekit-plugins-noise-cancellation~=0.3.2
+# google-genai==2.32.0
+
+# --- Optional -------------------------------------------------------------------------------------
+# google-cloud-storage>=2.18                # only if RECORDING_GCS_BUCKET is set (post-call recording upload)

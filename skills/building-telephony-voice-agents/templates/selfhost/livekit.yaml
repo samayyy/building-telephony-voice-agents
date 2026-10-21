@@ -1,0 +1,39 @@
+# livekit-server config for a single VM with a static public IP.
+# Keys checked against livekit/livekit config-sample.yaml (2026-10-21).
+port: 7880                      # behind Caddy/LB TLS on 443; keep 7880 closed in the firewall
+log_level: info
+
+rtc:
+  tcp_port: 7881                # ICE over TCP fallback; must be reachable directly (no LB, no TLS)
+  port_range_start: 50000       # ICE/UDP media for agent workers and WebRTC clients
+  port_range_end: 60000
+  use_external_ip: true         # discover the public IP via STUN (GCE/EC2 1:1 NAT)
+  # node_ip: 203.0.113.10       # explicit public IP; takes effect only with use_external_ip: false
+  # advertise_internal_ip: true # also advertise internal candidates for workers in the same VPC (VERIFY)
+
+redis:
+  address: 127.0.0.1:6379       # REQUIRED for SIP and egress (psrpc bus); same Redis everywhere
+
+keys:
+  # api_key: api_secret. Generate: echo "API$(openssl rand -hex 6)"; openssl rand -base64 32
+  APIxxxxxxxxxxxx: change-me-to-a-long-random-secret
+
+room:
+  empty_timeout: 300
+  departure_timeout: 20
+
+# TURN is only for browser/app clients behind restrictive firewalls. SIP callers and agent workers do not
+# use it, so a phone-only deployment can leave it off.
+turn:
+  enabled: false
+  # domain: turn.example.com    # separate domain + certificate
+  # tls_port: 5349              # must be 443 if there is no L4 load balancer in front
+  # udp_port: 3478
+  # cert_file: /etc/turn.crt
+  # key_file: /etc/turn.key
+
+# webhook:
+#   api_key: APIxxxxxxxxxxxx
+#   urls: ["https://backend.example.com/livekit/webhook"]
+# prometheus:
+#   port: 6789

@@ -1,0 +1,10 @@
+{
+  "trunk": {
+    "name": "my-agent outbound",
+    "address": "<carrier-sip-host-or-ip>",
+    "numbers": ["+91XXXXXXXXXX"],
+    "transport": "SIP_TRANSPORT_TCP",
+    "destination_country": "IN",
+    "media_encryption": "SIP_MEDIA_ENCRYPT_ALLOW"
+  }
+}

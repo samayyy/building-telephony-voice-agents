@@ -1,0 +1,8 @@
+{
+  "name": "building-telephony-voice-agents",
+  "version": "1.0.0",
+  "description": "Build, connect and tune phone-call voice agents on Gemini Live (LiveKit Cloud or self-hosted, SIP or WebSocket streams)",
+  "author": { "name": "samayyy" },
+  "license": "MIT",
+  "repository": "https://github.com/samayyy/building-telephony-voice-agents"
+}

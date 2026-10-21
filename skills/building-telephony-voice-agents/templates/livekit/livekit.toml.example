@@ -1,0 +1,11 @@
+# livekit.toml binds this folder to a LiveKit Cloud agent. Normally generated, not hand-written:
+#   lk agent create --region ap-south --secrets-file ./secrets.env --secret-mount ./gcp-sa.json
+#   lk agent config --id CA_xxxxxxxx          # regenerate for an existing agent
+# Region (us-east | eu-central | ap-south) is fixed at creation. For a second region keep a second file:
+#   lk agent create --region us-east --config livekit.us-east.toml ; lk agent deploy --config livekit.us-east.toml
+
+[project]
+  subdomain = "<project-subdomain>"   # project ID without the "p_" prefix (lk project list --json)
+
+[agent]
+  id = "<CA_agent-id>"
