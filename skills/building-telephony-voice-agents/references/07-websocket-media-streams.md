@@ -415,8 +415,9 @@ protocol only in a customer guide shared during onboarding. This skill deliberat
 When you get one, map it onto the generic adapter (§9). Work through it in this order:
 
 1. **Handshake:** who opens the socket (usually the carrier, to a `wss://` URL registered in its portal or call
-   flow), how it is authenticated (bearer token, mTLS, signed query, IP allowlist), and whether a failed handshake is
-   retried. If it isn't, run at least two instances behind a health check.
+   flow, or passed per call in the outbound-call request), how it is authenticated (bearer token, mTLS, a token in
+   the URL's query string, IP allowlist), and whether a failed handshake is retried. If it isn't, run at least two
+   instances behind a health check. A secret in the query string ends up in access logs unless you strip it.
 2. **Inbound events:** map them to `Event` kinds (`audio`, `dtmf`, `mark`, `hold`/`unhold`, `stop`), and map the
    start event to `CallInfo` (stream id to echo, call id, caller/called numbers, custom parameters).
 3. **Audio:** encoding, rate and outbound frame size. µ-law 8 kHz in 20 ms (160 B) frames is the common case:
